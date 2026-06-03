@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Giám Sát Giao Thông AI</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --dark-bg: #1a1a2e;
+            --light-bg: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+        
+        /* Header */
+        .header {
+            padding: 60px 0 40px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            animation: fadeInDown 1s ease;
+        }
+        
+        .header .subtitle {
+            font-size: 1.3rem;
+            font-weight: 300;
+            opacity: 0.95;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+        
+        /* Feature Cards Container */
+        .features-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Feature Card */
+        .feature-card {
+            background: white;
+            border-radius: 25px;
+            padding: 50px 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease both;
+        }
+        
+        .feature-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+        
+        .feature-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .feature-card:hover::before {
+            left: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+        }
+        
+        .feature-card.helmet {
+            border-top: 5px solid #764ba2;
+        }
+        
+        .feature-card.lane {
+            border-top: 5px solid #f5576c;
+        }
+        
+        .feature-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        
+        .feature-icon.helmet {
+            background: var(--primary-gradient);
+        }
+        
+        .feature-icon.lane {
+            background: var(--secondary-gradient);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .feature-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .feature-description {
+            font-size: 1.1rem;
+            color: #6c757d;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+        }
+        
+        .feature-list li {
+            padding: 12px 0;
+            font-size: 1rem;
+            color: #495057;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-list li i {
+            color: #28a745;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .btn-feature {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .btn-feature:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            color: white;
+        }
+        
+        .btn-helmet {
+            background: var(--primary-gradient);
+        }
+        
+        .btn-lane {
+            background: var(--secondary-gradient);
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            background: rgba(255,255,255,0.95);
+            padding: 50px 20px;
+            margin: 40px 0;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+        
+        /* Footer */
+        .footer {
+            background: rgba(0,0,0,0.3);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+        
+        .footer p {
+            margin: 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .feature-card {
+                padding: 30px 20px;
+            }
+            
+            .feature-title {
+                font-size: 1.8rem;
+            }
+            
+            .feature-icon {
+                width: 100px;
+                height: 100px;
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+    
+    <!-- Floating Particles -->
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+    <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
+    <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-brain"></i> HỆ THỐNG GIÁM SÁT GIAO THÔNG AI</h1>
+            <p class="subtitle">Ứng dụng Trí Tuệ Nhân Tạo trong phát hiện vi phạm giao thông</p>
+        </div>
+        
+        <!-- Features Container -->
+        <div class="features-container">
+            <div class="row">
+                <!-- Helmet Detection Card -->
+                <div class="col-lg-6 col-md-12">
+                    <div class="feature-card helmet">
+                        <div class="feature-icon helmet">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h2 class="feature-title">Phát Hiện Vi Phạm Mũ Bảo Hiểm</h2>
+                        <p class="feature-description">
+                            Hệ thống AI tự động phát hiện người đi xe máy không đội mũ bảo hiểm 
+                            với độ chính xác cao, hỗ trợ cả upload ảnh và webcam real-time.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Upload ảnh để kiểm tra ngay lập tức</li>
+                            <li><i class="fas fa-check-circle"></i> Phát hiện real-time qua webcam</li>
+                            <li><i class="fas fa-check-circle"></i> Phân loại: Có mũ / Không mũ</li>
+                            <li><i class="fas fa-check-circle"></i> Thống kê số lượng vi phạm</li>
+                            <li><i class="fas fa-check-circle"></i> Highlight vi phạm màu đỏ</li>
+                        </ul>
+                        <a href="/helmet-check" class="btn-feature btn-helmet">
+                            <i class="fas fa-rocket"></i> Truy Cập Ngay
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Lane Violation Card -->
+                <div class="col-lg-6 col-md-12">
+                    <div class="feature-card lane">
+                        <div class="feature-icon lane">
+                            <i class="fas fa-road"></i>
+                        </div>
+                        <h2 class="feature-title">Giám Sát Vi Phạm Làn Đường</h2>
+                        <p class="feature-description">
+                            Phát hiện tự động các phương tiện đi sai làn đường bằng công nghệ 
+                            Deep Learning, giúp đảm bảo an toàn giao thông.
+                        </p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Phát hiện xe máy đi vào làn ô tô</li>
+                            <li><i class="fas fa-check-circle"></i> Phát hiện ô tô đi vào làn xe máy</li>
+                            <li><i class="fas fa-check-circle"></i> Vẽ tự động vùng làn đường</li>
+                            <li><i class="fas fa-check-circle"></i> Hỗ trợ 5 loại phương tiện</li>
+                            <li><i class="fas fa-check-circle"></i> Chi tiết vi phạm theo loại xe</li>
+                        </ul>
+                        <a href="/lane-check" class="btn-feature btn-lane">
+                            <i class="fas fa-rocket"></i> Truy Cập Ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="stat-item">
+                            <div class="stat-number">
+                                <i class="fas fa-brain"></i> AI
+                            </div>
+                            <div class="stat-label">Công Nghệ YOLOv8</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-item">
+                            <div class="stat-number">2</div>
+                            <div class="stat-label">Tính Năng Chính</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-item">
+                            <div class="stat-number">
+                                <i class="fas fa-infinity"></i>
+                            </div>
+                            <div class="stat-label">Khả Năng Mở Rộng</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <p>
+                <i class="fas fa-copyright"></i> 2026 Hệ Thống Giám Sát Giao Thông AI
+            </p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                Phát triển với <i class="fas fa-heart" style="color: #ff6b6b;"></i> 
+                sử dụng YOLOv8, Flask, Bootstrap 5
+            </p>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Add smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Add hover effect sound (optional)
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            });
+        });
+        
+        // Animate stats on scroll
+        const animateStats = () => {
+            const stats = document.querySelectorAll('.stat-number');
+            stats.forEach(stat => {
+                const rect = stat.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                    stat.style.animation = 'pulse 1s ease';
+                }
+            });
+        };
+        
+        window.addEventListener('scroll', animateStats);
+        window.addEventListener('load', animateStats);
+    </script>
+</body>
+</html>
